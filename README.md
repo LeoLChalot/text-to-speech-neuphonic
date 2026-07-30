@@ -6,7 +6,8 @@ Projet visant à utiliser les modèle de synthèses volcales dévezloppés par *
 - [Hugging Face - neutts-2e](https://huggingface.co/neuphonic/neutts-2e)
 - [Hugging Face - neutts-nano](https://huggingface.co/neuphonic/neutts-nano)
 
-> \[!NOTE] Le modèle *neutts-2e* est utilisé ici pour personnaliser la synthèse à un sentiment
+> \[!NOTE]
+> Le modèle *neutts-2e* est utilisé ici pour personnaliser la synthèse à un sentiment
 > Tandis que le modèle *neutts-nano* est utilisé pour une synthyèse vocale basée sur un clonage de voix
 
 ## Configuratin de l'environnement
