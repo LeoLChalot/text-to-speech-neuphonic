@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuTTS Local - Synthèse Vocale IA (Neuphonic)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'neutts/css/style.css' %}">
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <span class="badge">Local On-Device Engine</span>
+            <h1>NeuTTS Local Synthesizer</h1>
+            <p>Génération vocale haute fidélité locale avec les modèles Neuphonic NeuTTS et NeuTTS-2E</p>
+        </div>
+
+        {% if error %}
+            <div class="alert alert-danger">
+                <span>⚠️ {{ error }}</span>
+            </div>
+        {% endif %}
+
+        {% if success %}
+            <div class="alert alert-success">
+                <span>✨ Audio généré localement avec succès !</span>
+            </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" id="neutts-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_mode">{{ form.mode.label }}</label>
+                {{ form.mode }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_gen_text">{{ form.gen_text.label }}</label>
+                {{ form.gen_text }}
+            </div>
+
+            <!-- Emotional Mode Fields -->
+            <div id="emotional-fields" class="grid-2">
+                <div class="form-group">
+                    <label for="id_speaker">{{ form.speaker.label }}</label>
+                    {{ form.speaker }}
+                </div>
+                <div class="form-group">
+                    <label for="id_emotion">{{ form.emotion.label }}</label>
+                    {{ form.emotion }}
+                </div>
+            </div>
+
+            <!-- Voice Cloning Mode Fields -->
+            <div id="cloning-fields" style="display: none;">
+                <div class="form-group">
+                    <label for="id_backbone_repo">{{ form.backbone_repo.label }}</label>
+                    {{ form.backbone_repo }}
+                </div>
+                <div class="form-group">
+                    <label for="id_ref_audio_file">{{ form.ref_audio_file.label }}</label>
+                    {{ form.ref_audio_file }}
+                </div>
+                <div class="form-group">
+                    <label for="id_ref_text">{{ form.ref_text.label }}</label>
+                    {{ form.ref_text }}
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submit-btn">
+                <div class="spinner" id="btn-spinner"></div>
+                <span id="btn-text">Générer la voix (Local)</span>
+            </button>
+        </form>
+
+        {% if audio_result_url %}
+            <div class="audio-player-container">
+                <h3>🔊 Résultat Audio Généré</h3>
+                <audio controls autoplay src="{{ audio_result_url }}">
+                    Votre navigateur ne supporte pas l'élément audio.
+                </audio>
+                <div style="margin-top: 1rem;">
+                    <a href="{{ audio_result_url }}" download class="btn-submit" style="display: inline-flex; width: auto; text-decoration: none; padding: 0.5rem 1rem; font-size: 0.85rem;">
+                        ⬇️ Télécharger .wav
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if recent_generations %}
+            <div class="history-section">
+                <h3>📜 Historique des Générations Récentes</h3>
+                <ul class="history-list">
+                    {% for gen in recent_generations %}
+                        <li class="history-item">
+                            <div class="info">
+                                <strong>[{{ gen.mode }}]</strong> {{ gen.text|truncatechars:45 }}
+                                <br><small style="color: #64748b;">{{ gen.created_at|date:"H:i:s - d/m/Y" }}</small>
+                            </div>
+                            {% if gen.audio_file %}
+                                <audio controls style="max-width: 220px; height: 36px;" src="/media/{{ gen.audio_file }}"></audio>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
